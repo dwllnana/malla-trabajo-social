@@ -1,4 +1,3 @@
-// Extraído del PDF
 const ramos = [
   {
     nombre: "Taller de Nivelación Matemáticas",
@@ -78,7 +77,6 @@ const ramos = [
     semestre: "Año 1 - Sem 2",
     prerequisitos: []
   }
-  // Puedes seguir añadiendo el resto aquí
 ];
 
 const estado = JSON.parse(localStorage.getItem("estadoAprobado")) || {};
