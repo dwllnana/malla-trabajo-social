@@ -1,3 +1,4 @@
+// Lista de ramos con nombre, código, semestre y prerequisitos
 const ramos = [
   {
     nombre: "Taller de Nivelación Matemáticas",
@@ -77,14 +78,18 @@ const ramos = [
     semestre: "Año 1 - Sem 2",
     prerequisitos: []
   }
+  // Puedes seguir agregando más ramos aquí sin errores de coma o sintaxis
 ];
 
+// Cargar estado desde localStorage
 const estado = JSON.parse(localStorage.getItem("estadoAprobado")) || {};
 
+// Guardar el estado en localStorage
 function guardarEstado() {
   localStorage.setItem("estadoAprobado", JSON.stringify(estado));
 }
 
+// Generar la malla en pantalla
 function crearMalla() {
   const container = document.getElementById("malla-container");
   container.innerHTML = "";
@@ -96,34 +101,35 @@ function crearMalla() {
     divSem.className = "semestre";
     divSem.innerHTML = `<h2>${sem}</h2>`;
 
-    ramos.filter(r => r.semestre === sem).forEach(ramo => {
-      const divRamo = document.createElement("div");
-      divRamo.className = "ramo";
-      divRamo.textContent = ramo.nombre;
+    ramos
+      .filter(r => r.semestre === sem)
+      .forEach(ramo => {
+        const divRamo = document.createElement("div");
+        divRamo.className = "ramo";
+        divRamo.textContent = ramo.nombre;
 
-      const aprobado = estado[ramo.codigo];
-      const habilitado = ramo.prerequisitos.every(cod => estado[cod]);
+        const aprobado = estado[ramo.codigo];
+        const habilitado = ramo.prerequisitos.every(cod => estado[cod]);
 
-      if (!habilitado && ramo.prerequisitos.length > 0) {
-        divRamo.classList.add("bloqueado");
-      } else if (aprobado) {
-        divRamo.classList.add("aprobado");
-      }
+        if (!habilitado && ramo.prerequisitos.length > 0) {
+          divRamo.classList.add("bloqueado");
+        } else if (aprobado) {
+          divRamo.classList.add("aprobado");
+        }
 
-      divRamo.addEventListener("click", () => {
-        if (divRamo.classList.contains("bloqueado")) return;
+        divRamo.addEventListener("click", () => {
+          if (divRamo.classList.contains("bloqueado")) return;
+          estado[ramo.codigo] = !estado[ramo.codigo];
+          guardarEstado();
+          crearMalla();
+        });
 
-        estado[ramo.codigo] = !estado[ramo.codigo];
-        guardarEstado();
-        crearMalla();
+        divSem.appendChild(divRamo);
       });
-
-      divSem.appendChild(divRamo);
-    });
 
     container.appendChild(divSem);
   });
 }
 
-crearMalla();
-
+// Esperar a que el DOM esté listo
+document.addEventListener("DOMContentLoaded", crearMalla);
